@@ -6,7 +6,7 @@
     "declaration": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES2021",
-    "baseUrl": "./",
+    "lib": ["ES2021"],
     "incremental": true,
     "skipLibCheck": true,
     "strictBindCallApply": false,

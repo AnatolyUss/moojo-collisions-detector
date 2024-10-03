@@ -8,6 +8,12 @@ import {
   ValidationArguments,
 } from 'class-validator';
 
+export type ResourceId = string; // Format: UUID V4.
+
+export type Collision = ResourceEventDto[]; // Format: at least 2 ResourceEventDto objects.
+
+export type ResourceCollisions = Collision[];
+
 type DecoratorClosure = (object: Record<string, any>, propertyName: string) => void;
 
 const IsGreaterThan = (
@@ -35,10 +41,10 @@ const IsGreaterThan = (
   };
 };
 
-export class ResourceDto {
-  @IsDefined({ message: '"id" is missing' })
-  @IsUUID(4, { message: '"id" must be of type UUID' })
-  id: string;
+export class ResourceEventDto {
+  @IsDefined({ message: '"resourceId" is missing' })
+  @IsUUID(4, { message: '"resourceId" must be of type UUID' })
+  resourceId: ResourceId;
 
   @IsDefined({ message: '"startTime" is missing' })
   @IsPositive({ message: '"startTime" must be a positive integer' })
@@ -51,7 +57,11 @@ export class ResourceDto {
   @IsInt({ message: '"endTime" must be of type integer' })
   endTime: number;
 
-  constructor(resource: unknown) {
-    Object.assign(this, resource);
+  constructor(resourceEvent: Partial<ResourceEventDto>) {
+    Object.assign(this, resourceEvent);
+  }
+
+  isLockedAt(time: number): boolean {
+    return this.startTime <= time && this.endTime >= time;
   }
 }
